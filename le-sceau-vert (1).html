@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Sceau Vert</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#F6F0E1;
+    --ivory-2:#EFE7D2;
+    --forest:#1E3428;
+    --forest-deep:#152720;
+    --gold:#C69B2E;
+    --gold-dim:#a5822a;
+    --rust:#A3432B;
+    --sage:#7E9678;
+    --ink:#22261F;
+    --line:rgba(34,38,31,0.14);
+    --line-on-forest:rgba(246,240,225,0.16);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ivory);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .mono{ font-family:'IBM Plex Mono',monospace; letter-spacing:0.02em; }
+  a{color:inherit;}
+  .wrap{ max-width:1080px; margin:0 auto; padding:0 28px; }
+  @media (max-width:640px){ .wrap{ padding:0 20px; } }
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(246,240,225,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px; max-width:1080px; margin:0 auto;
+  }
+  .logo{ display:flex; align-items:center; gap:10px; }
+  .logo-mark{ width:30px; height:30px; flex-shrink:0; }
+  .logo-text{ font-family:'Fraunces',serif; font-weight:600; font-size:18px; }
+  .navlinks{ display:flex; gap:28px; font-size:14px; }
+  .navlinks a{ text-decoration:none; opacity:0.75; transition:opacity .15s; }
+  .navlinks a:hover{ opacity:1; }
+  .navlinks .locked{ display:inline-flex; align-items:center; gap:5px; }
+  @media (max-width:700px){ .navlinks{ display:none; } }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:
+      radial-gradient(ellipse 900px 500px at 80% -10%, rgba(198,155,46,0.16), transparent 60%),
+      var(--forest);
+    color:var(--ivory);
+    padding:110px 0 90px;
+    position:relative;
+    overflow:hidden;
+    border-bottom:6px solid var(--gold);
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(246,240,225,0.035) 0 1px, transparent 1px 90px);
+    pointer-events:none;
+  }
+  .hero-inner{ position:relative; display:grid; grid-template-columns:1.3fr 1fr; gap:50px; align-items:center; }
+  @media (max-width:820px){ .hero-inner{ grid-template-columns:1fr; } }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--gold); margin-bottom:18px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow .dash{ width:24px; height:1px; background:var(--gold); }
+  .hero h1{ font-size:clamp(38px,5.4vw,62px); line-height:1.04; margin-bottom:22px; }
+  .hero h1 em{ font-style:italic; color:var(--gold); }
+  .hero p.lead{ font-size:17px; line-height:1.6; color:rgba(246,240,225,0.82); max-width:480px; margin-bottom:32px; }
+  .hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; }
+
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:13px 24px; border-radius:3px; border:1px solid transparent;
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:600;
+    cursor:pointer; text-decoration:none; transition:transform .15s, box-shadow .15s;
+  }
+  .btn:active{ transform:translateY(1px); }
+  .btn-primary{ background:var(--gold); color:var(--forest-deep); }
+  .btn-primary:hover{ box-shadow:0 6px 20px rgba(198,155,46,0.35); }
+  .btn-ghost{ background:transparent; border-color:var(--line-on-forest); color:var(--ivory); }
+  .btn-ghost:hover{ border-color:var(--gold); }
+  .btn-dark{ background:var(--forest); color:var(--ivory); }
+  .btn-dark:hover{ box-shadow:0 6px 20px rgba(30,52,40,0.3); }
+  .btn:disabled{ opacity:0.5; cursor:not-allowed; }
+
+  /* seal */
+  .seal-wrap{ display:flex; justify-content:center; }
+  .seal{
+    width:230px; height:230px; position:relative;
+    display:flex; align-items:center; justify-content:center;
+    animation:sealFloat 6s ease-in-out infinite;
+  }
+  @keyframes sealFloat{ 0%,100%{ transform:translateY(0) rotate(-3deg);} 50%{ transform:translateY(-9px) rotate(3deg);} }
+  .seal-ring{
+    position:absolute; inset:0; border-radius:50%;
+    background:
+      repeating-conic-gradient(var(--gold) 0deg 7deg, transparent 7deg 14.5deg);
+    -webkit-mask:radial-gradient(circle, transparent 62%, black 63%, black 100%);
+            mask:radial-gradient(circle, transparent 62%, black 63%, black 100%);
+    opacity:0.9;
+  }
+  .seal-core{
+    width:74%; height:74%; border-radius:50%;
+    background:var(--forest-deep);
+    border:2px solid var(--gold);
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    color:var(--gold); text-align:center;
+  }
+  .seal-core svg{ width:34px; height:34px; margin-bottom:6px; }
+  .seal-core .seal-label{ font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.14em; }
+
+  /* ---------- SECTION SHARED ---------- */
+  section{ padding:88px 0; }
+  .section-head{ max-width:600px; margin-bottom:52px; }
+  .section-num{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--rust);
+    letter-spacing:0.1em; margin-bottom:14px; display:block;
+  }
+  .section-head h2{ font-size:clamp(28px,3.6vw,40px); line-height:1.12; margin-bottom:16px; }
+  .section-head p{ font-size:16px; line-height:1.65; color:rgba(34,38,31,0.72); }
+
+  /* ---------- LABEL / CRITERES ---------- */
+  .criteria-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); }
+  @media (max-width:760px){ .criteria-grid{ grid-template-columns:1fr; } }
+  .criteria-card{ background:var(--ivory); padding:30px 26px; }
+  .criteria-card .num{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--sage); display:block; margin-bottom:14px; }
+  .criteria-card h3{ font-size:19px; margin-bottom:10px; }
+  .criteria-card p{ font-size:14.5px; line-height:1.6; color:rgba(34,38,31,0.68); margin:0; }
+
+  /* ---------- STEPS ---------- */
+  .steps{ display:flex; flex-direction:column; }
+  .step{
+    display:grid; grid-template-columns:70px 1fr; gap:24px;
+    padding:28px 0; border-top:1px solid var(--line);
+  }
+  .step:last-child{ border-bottom:1px solid var(--line); }
+  .step-n{ font-family:'Fraunces',serif; font-size:34px; color:var(--gold-dim); font-weight:500; }
+  .step h3{ font-size:19px; margin-bottom:8px; }
+  .step p{ font-size:14.5px; line-height:1.6; color:rgba(34,38,31,0.68); max-width:520px; margin:0; }
+
+  /* ---------- CANDIDATURE ---------- */
+  .dossier-section{ background:var(--forest); color:var(--ivory); border-top:1px solid var(--forest-deep); border-bottom:1px solid var(--forest-deep); }
+  .dossier-section .section-head p{ color:rgba(246,240,225,0.7); }
+  .dossier-section .section-num{ color:var(--gold); }
+  .dossier{
+    background:var(--ivory); color:var(--ink);
+    border:1px solid rgba(0,0,0,0.06);
+    padding:40px; max-width:640px; position:relative;
+    box-shadow:0 30px 60px rgba(0,0,0,0.25);
+  }
+  .dossier::before{
+    content:"DOSSIER DE CANDIDATURE";
+    position:absolute; top:18px; right:-46px;
+    transform:rotate(90deg);
+    font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.15em;
+    color:var(--sage);
+  }
+  .field{ margin-bottom:20px; }
+  .field label{ display:block; font-size:12.5px; font-weight:600; margin-bottom:7px; letter-spacing:0.02em; }
+  .field input, .field textarea{
+    width:100%; padding:11px 13px; border:1px solid rgba(34,38,31,0.22);
+    background:#fff; font-family:'Inter',sans-serif; font-size:14.5px; border-radius:2px; color:var(--ink);
+  }
+  .field input:focus, .field textarea:focus{ outline:2px solid var(--gold); outline-offset:1px; border-color:var(--gold); }
+  .field textarea{ resize:vertical; min-height:88px; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:520px){ .row2{ grid-template-columns:1fr; } }
+  .check{ display:flex; gap:10px; align-items:flex-start; font-size:13.5px; line-height:1.5; color:rgba(34,38,31,0.75); margin-bottom:24px; }
+  .check input{ margin-top:3px; }
+
+  .dossier-status{ margin-top:22px; font-family:'IBM Plex Mono',monospace; font-size:13px; }
+  .dossier-status.pending{ color:var(--rust); }
+  .dossier-status.granted{ color:var(--sage); }
+
+  .stamp-reveal{
+    display:flex; align-items:center; gap:18px; margin-top:20px;
+    padding:16px 18px; border:1.5px dashed var(--gold);
+    animation:stampIn .5s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes stampIn{ 0%{ opacity:0; transform:scale(0.7) rotate(-8deg);} 100%{ opacity:1; transform:scale(1) rotate(-2deg);} }
+  .stamp-mini{
+    width:56px; height:56px; border-radius:50%; border:2px solid var(--rust); color:var(--rust);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-family:'IBM Plex Mono',monospace; font-size:8px; text-align:center; letter-spacing:0.06em; line-height:1.2;
+    transform:rotate(-8deg);
+  }
+  .stamp-reveal .txt strong{ display:block; font-family:'Fraunces',serif; font-size:16px; margin-bottom:2px; }
+  .stamp-reveal .txt span{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:rgba(34,38,31,0.6); }
+
+  /* ---------- ANNUAIRE ---------- */
+  .annuaire-locked{
+    border:1px dashed rgba(34,38,31,0.3); padding:60px 30px; text-align:center; color:rgba(34,38,31,0.6);
+  }
+  .annuaire-locked svg{ width:30px; height:30px; margin-bottom:14px; opacity:0.5; }
+  .annuaire-locked p{ font-size:14.5px; max-width:360px; margin:0 auto; line-height:1.6; }
+
+  .filters{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:30px; }
+  .chip{
+    padding:8px 16px; border:1px solid var(--line); border-radius:20px; font-size:13px;
+    cursor:pointer; background:transparent; font-family:'Inter',sans-serif; transition:all .15s;
+  }
+  .chip.active{ background:var(--forest); color:var(--ivory); border-color:var(--forest); }
+  .search-input{
+    padding:9px 14px; border:1px solid var(--line); border-radius:20px; font-size:13px; font-family:'Inter',sans-serif;
+    min-width:200px;
+  }
+  .search-input:focus{ outline:none; border-color:var(--gold); }
+
+  .cards{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); }
+  @media (max-width:700px){ .cards{ grid-template-columns:1fr; } }
+  .card{ background:var(--ivory); padding:28px 26px; position:relative; }
+  .card-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:12px; }
+  .card h3{ font-size:20px; margin-bottom:4px; }
+  .card .loc{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--rust); }
+  .badge-verif{
+    flex-shrink:0; width:40px; height:40px; border-radius:50%; border:1.5px solid var(--gold);
+    display:flex; align-items:center; justify-content:center; color:var(--gold);
+  }
+  .badge-verif svg{ width:17px; height:17px; }
+  .card p.desc{ font-size:14px; line-height:1.6; color:rgba(34,38,31,0.72); margin:12px 0 16px; }
+  .tags{ display:flex; gap:6px; flex-wrap:wrap; }
+  .tag{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; padding:4px 9px;
+    background:rgba(126,150,120,0.15); color:var(--forest); border-radius:2px; letter-spacing:0.03em;
+  }
+  .card-foot{ margin-top:16px; padding-top:14px; border-top:1px solid var(--line); font-family:'IBM Plex Mono',monospace; font-size:11px; color:rgba(34,38,31,0.5); }
+
+  .propose-box{ margin-top:36px; text-align:center; }
+  .propose-box button{ margin-top:0; }
+
+  /* proposer form */
+  .mini-form{ max-width:520px; margin:22px auto 0; text-align:left; border:1px solid var(--line); padding:24px; background:#fff; }
+  .mini-form .field{ margin-bottom:14px; }
+
+  /* ---------- FOOTER ---------- */
+  footer{ background:var(--forest-deep); color:rgba(246,240,225,0.6); padding:48px 0 32px; }
+  .footer-inner{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
+  footer .logo-text{ color:var(--ivory); }
+  footer .admin-link{ font-size:12px; text-decoration:underline; opacity:0.5; cursor:pointer; background:none; border:none; color:inherit; font-family:'IBM Plex Mono',monospace; }
+  footer .admin-link:hover{ opacity:0.9; }
+  .foot-note{ font-size:12px; margin-top:20px; opacity:0.4; font-family:'IBM Plex Mono',monospace; }
+
+  /* ---------- ADMIN PANEL ---------- */
+  .admin-panel{
+    position:fixed; inset:0; background:rgba(21,39,32,0.7); z-index:200;
+    display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .admin-box{
+    background:var(--ivory); max-width:720px; width:100%; max-height:82vh; overflow-y:auto;
+    padding:30px; border-radius:4px;
+  }
+  .admin-box h2{ font-size:22px; margin-bottom:6px; }
+  .admin-box .sub{ font-size:13px; color:rgba(34,38,31,0.6); margin-bottom:24px; }
+  .admin-row{ display:flex; justify-content:space-between; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid var(--line); }
+  .admin-row .info strong{ display:block; font-size:14.5px; }
+  .admin-row .info span{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:rgba(34,38,31,0.55); }
+  .admin-row .actions{ display:flex; gap:8px; flex-shrink:0; }
+  .btn-sm{ padding:7px 12px; font-size:12px; border-radius:3px; border:1px solid var(--line); background:#fff; cursor:pointer; font-family:'Inter',sans-serif; }
+  .btn-sm.approve{ background:var(--sage); color:#fff; border-color:var(--sage); }
+  .btn-sm.reject{ background:transparent; color:var(--rust); border-color:var(--rust); }
+  .admin-close{ display:flex; justify-content:flex-end; margin-top:20px; }
+  .empty-note{ font-size:13px; color:rgba(34,38,31,0.5); padding:14px 0; }
+
+  .hidden{ display:none !important; }
+  .loading-line{ font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--sage); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">
+      <svg class="logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="19" stroke="#A3432B" stroke-width="1.5"/>
+        <path d="M20 30C20 30 12 25 12 17C12 12 15.5 9 20 9C24.5 9 28 12 28 17C28 25 20 30 20 30Z" fill="#1E3428"/>
+        <path d="M20 30V17" stroke="#C69B2E" stroke-width="1.3"/>
+      </svg>
+      <span class="logo-text">Le Sceau Vert</span>
+    </div>
+    <div class="navlinks">
+      <a href="#label">Le label</a>
+      <a href="#comment">Comment ça marche</a>
+      <a href="#rejoindre">Candidature</a>
+      <a href="#annuaire" class="locked" id="navAnnuaireLink">Annuaire <span id="navLockIcon">🔒</span></a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <div class="eyebrow"><span class="dash"></span> ANNUAIRE CONFIDENTIEL — ACCÈS SUR CANDIDATURE</div>
+      <h1>Les tables 100% végétariennes, <em>vérifiées</em> une à une.</h1>
+      <p class="lead">Le Sceau Vert référence les restaurants entièrement végétariens ayant passé notre contrôle sur place. L'annuaire n'est pas public : il se mérite. Déposez votre candidature pour rejoindre le cercle.</p>
+      <div class="hero-ctas">
+        <a href="#rejoindre" class="btn btn-primary">Déposer ma candidature</a>
+        <a href="#label" class="btn btn-ghost">Découvrir le label</a>
+      </div>
+    </div>
+    <div class="seal-wrap">
+      <div class="seal">
+        <div class="seal-ring"></div>
+        <div class="seal-core">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 4 15.5 4 8.5C4 4.9 6.9 2 10.5 2C11.9 2 13.2 2.5 14.2 3.4C15.2 2.5 16.5 2 17.9 2C21.5 2 24 4.9 24 8.5" stroke="currentColor" stroke-width="1.4"/><path d="M12 21V8" stroke="currentColor" stroke-width="1.4"/></svg>
+          <span class="seal-label">SCEAU · VÉRIFIÉ · 100% VÉGÉ</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="label">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">01 — LE LABEL</span>
+      <h2>Un sceau qui ne se donne pas facilement.</h2>
+      <p>Chaque adresse listée a été visitée et contrôlée par notre comité avant d'obtenir le Sceau Vert. Trois critères non négociables.</p>
+    </div>
+    <div class="criteria-grid">
+      <div class="criteria-card">
+        <span class="num">CRITÈRE I</span>
+        <h3>Carte 100% végétarienne</h3>
+        <p>Aucune exception : la totalité de la carte, du service midi au service du soir, est végétarienne — sans arrangement possible avec la cuisine.</p>
+      </div>
+      <div class="criteria-card">
+        <span class="num">CRITÈRE II</span>
+        <h3>Visite de vérification</h3>
+        <p>Un membre du comité se rend sur place, incognito, et contrôle les approvisionnements, les étiquettes et les pratiques réelles en cuisine.</p>
+      </div>
+      <div class="criteria-card">
+        <span class="num">CRITÈRE III</span>
+        <h3>Renouvellement annuel</h3>
+        <p>Le sceau n'est jamais acquis pour toujours : chaque adresse est recontrôlée chaque année pour rester dans l'annuaire.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="comment" style="background:var(--ivory-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">02 — LE PARCOURS</span>
+      <h2>Trois étapes avant d'ouvrir l'annuaire.</h2>
+      <p>L'accès n'est pas automatique : voici exactement ce qu'il se passe entre votre candidature et l'ouverture de l'annuaire.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">01</div>
+        <div><h3>Vous déposez votre dossier</h3><p>Quelques informations et une ligne sur ce qui vous amène — pas de formulaire interminable.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <div><h3>Le dossier est examiné</h3><p>Chaque candidature est enregistrée et passée en revue par le comité, qui garde une trace de chaque accès accordé.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <div><h3>Le sceau d'accès est délivré</h3><p>Une fois validé, l'annuaire complet se déverrouille : adresses, quartiers, spécialités et notes de vérification.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="rejoindre" class="dossier-section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">03 — REJOINDRE</span>
+      <h2>Déposer votre candidature</h2>
+      <p><span id="memberCount" class="mono">—</span> personnes ont déjà rejoint le cercle.</p>
+    </div>
+
+    <form class="dossier" id="candidatureForm">
+      <div class="field">
+        <label for="fName">Nom complet</label>
+        <input type="text" id="fName" required placeholder="Camille Dubreuil">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="fEmail">Email</label>
+          <input type="email" id="fEmail" required placeholder="camille@exemple.fr">
+        </div>
+        <div class="field">
+          <label for="fVille">Ville</label>
+          <input type="text" id="fVille" required placeholder="Paris">
+        </div>
+      </div>
+      <div class="field">
+        <label for="fMotif">Pourquoi voulez-vous rejoindre le cercle ?</label>
+        <textarea id="fMotif" required placeholder="En une ou deux phrases..."></textarea>
+      </div>
+      <label class="check">
+        <input type="checkbox" id="fCharte" required>
+        J'adhère à la charte du label et je m'engage à ne pas partager les adresses en dehors du cercle.
+      </label>
+      <button type="submit" class="btn btn-primary" id="submitBtn" style="width:100%; justify-content:center;">Envoyer ma candidature</button>
+
+      <div id="statusZone"></div>
+    </form>
+  </div>
+</section>
+
+<section id="annuaire">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-num">04 — L'ANNUAIRE</span>
+      <h2>Les adresses vérifiées</h2>
+      <p>Réservé aux membres. Recherchez par quartier ou par spécialité.</p>
+    </div>
+
+    <div id="lockedView" class="annuaire-locked">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      <p>L'annuaire est verrouillé. Déposez votre candidature ci-dessus pour découvrir les adresses vérifiées par le Sceau Vert.</p>
+    </div>
+
+    <div id="unlockedView" class="hidden">
+      <div class="filters">
+        <button class="chip active" data-tag="all">Tous</button>
+        <button class="chip" data-tag="Bio">Bio</button>
+        <button class="chip" data-tag="Fait-maison">Fait-maison</button>
+        <button class="chip" data-tag="Sans gluten possible">Sans gluten possible</button>
+        <button class="chip" data-tag="Vegan friendly">Vegan friendly</button>
+        <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un quartier, un plat...">
+      </div>
+      <div class="cards" id="cardsGrid"></div>
+
+      <div class="propose-box">
+        <button class="btn btn-dark" id="showProposeForm">Proposer une adresse</button>
+        <div class="mini-form hidden" id="proposeForm">
+          <div class="field"><label>Nom du restaurant</label><input type="text" id="pName" placeholder="ex : La Feuille Tendre"></div>
+          <div class="row2">
+            <div class="field"><label>Quartier / ville</label><input type="text" id="pLoc" placeholder="ex : Belleville, Paris"></div>
+            <div class="field"><label>Spécialité</label><input type="text" id="pTag" placeholder="ex : Bio"></div>
+          </div>
+          <div class="field"><label>Description courte</label><textarea id="pDesc" placeholder="Ce qui rend l'adresse remarquable..."></textarea></div>
+          <button class="btn btn-primary" id="submitPropose" style="width:100%; justify-content:center;">Soumettre au comité</button>
+          <div id="proposeStatus" style="margin-top:12px; font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--sage);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div class="logo">
+      <svg class="logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="19" stroke="#C69B2E" stroke-width="1.5"/>
+        <path d="M20 30C20 30 12 25 12 17C12 12 15.5 9 20 9C24.5 9 28 12 28 17C28 25 20 30 20 30Z" fill="#F6F0E1"/>
+        <path d="M20 30V17" stroke="#1E3428" stroke-width="1.3"/>
+      </svg>
+      <span class="logo-text">Le Sceau Vert</span>
+    </div>
+    <button class="admin-link" id="openAdmin">Espace du comité</button>
+  </div>
+  <div class="wrap foot-note">Les données de candidature et les adresses proposées sont partagées entre les membres de cette démonstration.</div>
+</footer>
+
+<div class="admin-panel hidden" id="adminPanel">
+  <div class="admin-box">
+    <h2>Espace du comité</h2>
+    <div class="sub">Examinez les candidatures et validez les adresses proposées.</div>
+
+    <h3 style="font-size:15px; margin-bottom:6px;">Candidatures reçues</h3>
+    <div id="adminCandidatures"></div>
+
+    <h3 style="font-size:15px; margin:26px 0 6px;">Adresses proposées, en attente</h3>
+    <div id="adminProposals"></div>
+
+    <div class="admin-close"><button class="btn btn-dark" id="closeAdmin">Fermer</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const SEED_RESTOS = [
+    {id:'seed-1', name:'La Feuille Tendre', loc:'Belleville, Paris', tags:['Bio','Fait-maison'], desc:'Cuisine de saison, légumes en direct de maraîchers d\\'Île-de-France, ardoise changée chaque matin.', verifiedOn:'2026-03-12', status:'approved'},
+    {id:'seed-2', name:'Racine & Sel', loc:'Croix-Rousse, Lyon', tags:['Vegan friendly','Bio'], desc:'Table végétale généreuse, fermentations maison et cave de vins nature.', verifiedOn:'2026-01-28', status:'approved'},
+    {id:'seed-3', name:'Le Jardin Clos', loc:'Le Marais, Paris', tags:['Fait-maison','Sans gluten possible'], desc:'Ancienne cour intérieure transformée en jardin d\\'hiver, cuisine du potager attenant.', verifiedOn:'2026-02-05', status:'approved'},
+    {id:'seed-4', name:'Chlorophylle', loc:'Le Panier, Marseille', tags:['Vegan friendly','Bio'], desc:'Assiettes méditerranéennes 100% plantes, huile d\\'olive de production locale.', verifiedOn:'2025-11-19', status:'approved'},
+    {id:'seed-5', name:'Sous la Feuille', loc:'Capitole, Toulouse', tags:['Fait-maison'], desc:'Petite salle familiale, plat unique quotidien selon le marché du matin.', verifiedOn:'2026-04-02', status:'approved'},
+    {id:'seed-6', name:'Verte Table', loc:'Hypercentre, Nantes', tags:['Sans gluten possible','Bio'], desc:'Cuisine végétale précise, cartes courtes, farines locales pour tous les pains maison.', verifiedOn:'2025-12-14', status:'approved'}
+  ];
+
+  let restaurants = [];
+  let candidatures = [];
+  let accessGranted = false;
+  let activeTag = 'all';
+
+  async function safeGet(key, shared){
+    try{ const r = await window.storage.get(key, shared); return r ? r.value : null; }
+    catch(e){ return null; }
+  }
+  async function safeSet(key, value, shared){
+    try{ await window.storage.set(key, value, shared); }catch(e){ console.error('storage set failed', e); }
+  }
+  async function safeList(prefix, shared){
+    try{ const r = await window.storage.list(prefix, shared); return r ? r.keys : []; }
+    catch(e){ return []; }
+  }
+
+  async function loadRestaurants(){
+    const keys = await safeList('restaurant:', true);
+    let list = [];
+    for(const k of keys){
+      const v = await safeGet(k, true);
+      if(v){ try{ list.push(JSON.parse(v)); }catch(e){} }
+    }
+    if(list.length === 0){
+      // seed once
+      for(const r of SEED_RESTOS){
+        await safeSet('restaurant:'+r.id, JSON.stringify(r), true);
+      }
+      list = SEED_RESTOS.slice();
+    }
+    restaurants = list;
+  }
+
+  async function loadCandidatures(){
+    const keys = await safeList('candidature:', true);
+    let list = [];
+    for(const k of keys){
+      const v = await safeGet(k, true);
+      if(v){ try{ list.push(JSON.parse(v)); }catch(e){} }
+    }
+    candidatures = list.sort((a,b)=> (b.ts||0) - (a.ts||0));
+    document.getElementById('memberCount').textContent = (128 + candidatures.length).toString();
+  }
+
+  function renderCards(){
+    const grid = document.getElementById('cardsGrid');
+    const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+    const approved = restaurants.filter(r => r.status === 'approved');
+    const filtered = approved.filter(r => {
+      const matchesTag = activeTag === 'all' || (r.tags||[]).includes(activeTag);
+      const hay = (r.name+' '+r.loc+' '+r.desc+' '+(r.tags||[]).join(' ')).toLowerCase();
+      const matchesQ = q === '' || hay.includes(q);
+      return matchesTag && matchesQ;
+    });
+    grid.innerHTML = filtered.map(r => `
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <h3>${escapeHtml(r.name)}</h3>
+            <div class="loc">${escapeHtml(r.loc)}</div>
+          </div>
+          <div class="badge-verif" title="Vérifié">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <p class="desc">${escapeHtml(r.desc)}</p>
+        <div class="tags">${(r.tags||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
+        <div class="card-foot mono">SCEAU VÉRIFIÉ LE ${formatDate(r.verifiedOn)}</div>
+      </div>
+    `).join('') || '<div style="padding:30px; grid-column:1/-1; text-align:center; color:rgba(34,38,31,0.5); font-size:14px;">Aucune adresse ne correspond à cette recherche.</div>';
+  }
+
+  function formatDate(iso){
+    if(!iso) return '—';
+    const d = new Date(iso);
+    if(isNaN(d)) return iso;
+    return d.toLocaleDateString('fr-FR', {day:'2-digit', month:'short', year:'numeric'});
+  }
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      activeTag = chip.dataset.tag;
+      renderCards();
+    });
+  });
+  document.getElementById('searchInput').addEventListener('input', renderCards);
+
+  function unlockAnnuaire(){
+    accessGranted = true;
+    document.getElementById('lockedView').classList.add('hidden');
+    document.getElementById('unlockedView').classList.remove('hidden');
+    document.getElementById('navLockIcon').textContent = '🔓';
+    renderCards();
+  }
+
+  document.getElementById('candidatureForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const zone = document.getElementById('statusZone');
+    btn.disabled = true;
+    btn.textContent = 'Envoi en cours...';
+    zone.innerHTML = '<div class="dossier-status pending" style="margin-top:16px;">Examen du dossier en cours...</div>';
+
+    const record = {
+      id: 'c-' + Date.now(),
+      name: document.getElementById('fName').value.trim(),
+      email: document.getElementById('fEmail').value.trim(),
+      ville: document.getElementById('fVille').value.trim(),
+      motif: document.getElementById('fMotif').value.trim(),
+      status: 'approved',
+      ts: Date.now()
+    };
+    await safeSet('candidature:' + record.id, JSON.stringify(record), true);
+    await loadCandidatures();
+
+    setTimeout(() => {
+      const serial = 'SV-' + new Date().getFullYear() + '-' + String(1000 + candidatures.length).slice(-4);
+      zone.innerHTML = `
+        <div class="stamp-reveal">
+          <div class="stamp-mini">ACCÈS<br>ACCORDÉ</div>
+          <div class="txt">
+            <strong>Candidature acceptée</strong>
+            <span>N° ${serial} — bienvenue dans le cercle</span>
+          </div>
+        </div>`;
+      btn.textContent = 'Candidature envoyée';
+      unlockAnnuaire();
+      setTimeout(() => { document.getElementById('annuaire').scrollIntoView({behavior:'smooth'}); }, 700);
+    }, 1200);
+  });
+
+  // proposer une adresse
+  document.getElementById('showProposeForm').addEventListener('click', () => {
+    document.getElementById('proposeForm').classList.toggle('hidden');
+  });
+  document.getElementById('submitPropose').addEventListener('click', async () => {
+    const name = document.getElementById('pName').value.trim();
+    const loc = document.getElementById('pLoc').value.trim();
+    const tag = document.getElementById('pTag').value.trim();
+    const desc = document.getElementById('pDesc').value.trim();
+    const statusEl = document.getElementById('proposeStatus');
+    if(!name || !loc){ statusEl.style.color = 'var(--rust)'; statusEl.textContent = 'Merci de renseigner au moins le nom et le quartier.'; return; }
+    const rec = {
+      id: 'p-' + Date.now(),
+      name, loc, desc: desc || 'Description à compléter par le comité.',
+      tags: tag ? [tag] : [],
+      status: 'pending',
+      verifiedOn: null
+    };
+    await safeSet('restaurant:' + rec.id, JSON.stringify(rec), true);
+    await loadRestaurants();
+    statusEl.style.color = 'var(--sage)';
+    statusEl.textContent = 'Merci — cette adresse est transmise au comité pour vérification.';
+    document.getElementById('pName').value = '';
+    document.getElementById('pLoc').value = '';
+    document.getElementById('pTag').value = '';
+    document.getElementById('pDesc').value = '';
+  });
+
+  // admin panel
+  document.getElementById('openAdmin').addEventListener('click', async () => {
+    await loadCandidatures();
+    await loadRestaurants();
+    renderAdmin();
+    document.getElementById('adminPanel').classList.remove('hidden');
+  });
+  document.getElementById('closeAdmin').addEventListener('click', () => {
+    document.getElementById('adminPanel').classList.add('hidden');
+  });
+
+  function renderAdmin(){
+    const cWrap = document.getElementById('adminCandidatures');
+    cWrap.innerHTML = candidatures.length ? candidatures.map(c => `
+      <div class="admin-row">
+        <div class="info">
+          <strong>${escapeHtml(c.name)} — ${escapeHtml(c.ville)}</strong>
+          <span>${escapeHtml(c.email)} · ${new Date(c.ts).toLocaleString('fr-FR')}</span>
+        </div>
+        <div class="actions"><span class="mono" style="font-size:11px; color:var(--sage);">Accordé</span></div>
+      </div>
+    `).join('') : '<div class="empty-note">Aucune candidature pour le moment.</div>';
+
+    const pending = restaurants.filter(r => r.status === 'pending');
+    const pWrap = document.getElementById('adminProposals');
+    pWrap.innerHTML = pending.length ? pending.map(r => `
+      <div class="admin-row">
+        <div class="info">
+          <strong>${escapeHtml(r.name)}</strong>
+          <span>${escapeHtml(r.loc)}</span>
+        </div>
+        <div class="actions">
+          <button class="btn-sm approve" data-approve="${r.id}">Valider le sceau</button>
+          <button class="btn-sm reject" data-reject="${r.id}">Refuser</button>
+        </div>
+      </div>
+    `).join('') : '<div class="empty-note">Aucune adresse en attente.</div>';
+
+    pWrap.querySelectorAll('[data-approve]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.approve;
+        const r = restaurants.find(x => x.id === id);
+        if(r){
+          r.status = 'approved';
+          r.verifiedOn = new Date().toISOString().slice(0,10);
+          await safeSet('restaurant:' + id, JSON.stringify(r), true);
+          await loadRestaurants();
+          renderAdmin();
+          renderCards();
+        }
+      });
+    });
+    pWrap.querySelectorAll('[data-reject]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.reject;
+        await safeSet('restaurant:' + id, null, true);
+        // "delete" by overwriting status instead, since storage may not support null well
+        const r = restaurants.find(x => x.id === id);
+        if(r){ r.status = 'rejected'; await safeSet('restaurant:' + id, JSON.stringify(r), true); }
+        await loadRestaurants();
+        renderAdmin();
+      });
+    });
+  }
+
+  document.getElementById('navAnnuaireLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('annuaire').scrollIntoView({behavior:'smooth'});
+  });
+
+  (async function init(){
+    await loadRestaurants();
+    await loadCandidatures();
+    renderCards();
+  })();
+})();
+</script>
+</body>
+</html>
